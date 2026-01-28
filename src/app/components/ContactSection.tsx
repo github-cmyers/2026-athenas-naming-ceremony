@@ -13,10 +13,9 @@ export default function ContactSection({ name, phone, email }: ContactSectionPro
       <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg text-center">
         <h2 className="text-2xl font-bold text-rose-700 mb-4">Questions?</h2>
         <p className="text-gray-600 mb-4">
-          Feel free to reach out if you have any questions about the ceremony.
+          Feel free to reach out if you have any questions:
         </p>
         <div className="space-y-3">
-          <p className="text-lg font-medium text-gray-800">{name}</p>
           <a
             href={phoneLink}
             className="inline-flex items-center gap-2 px-6 py-2 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg transition-colors"

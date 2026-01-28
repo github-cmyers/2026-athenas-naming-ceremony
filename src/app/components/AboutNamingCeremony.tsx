@@ -35,6 +35,10 @@ export default function AboutNamingCeremony() {
               nurture the newest member.
             </p>
           </div>
+          <p>
+            <strong>Please do not feel obligated to bring a gift — your presence and blessings are the
+            most cherished offerings as we welcome our daughter into the world.</strong>
+          </p>
         </div>
       </div>
     </section>

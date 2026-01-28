@@ -1,27 +1,49 @@
-interface ContactSectionProps {
+"use client";
+
+interface PromoProps {
   name: string;
   phone: string;
   email?: string;
 }
 
-export default function ContactSection({ name, phone, email }: ContactSectionProps) {
+export default function Promo({ name, phone, email }: PromoProps) {
   const phoneLink = `tel:${phone.replace(/[^0-9+]/g, "")}`;
   const emailLink = email ? `mailto:${email}` : null;
 
   return (
     <section className="max-w-2xl mx-auto px-4 mb-12">
-      <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg text-center">
-        <h2 className="text-2xl font-bold text-rose-700 mb-4">Would you like me to build you a website like this?</h2>
-        <p className="text-gray-600 mb-4">
-          This website was built by Ethan & Athen's Dad. If you're interested in me building you one of your own at a discount feel free to reach out:
-        </p>
-        <div className="space-y-3">
+      <div className="relative overflow-hidden rounded-2xl shadow-xl">
+        {/* Gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700" />
+
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute top-4 left-4 text-4xl opacity-20">💻</div>
+          <div className="absolute bottom-4 right-4 text-4xl opacity-20">✨</div>
+        </div>
+
+        {/* Content */}
+        <div className="relative p-8 text-center">
+          {/* Badge */}
+          <div className="inline-block mb-4">
+            <span className="px-4 py-1 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full uppercase tracking-wide shadow-lg">
+              Colin's Side Hustle
+            </span>
+          </div>
+
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+            This website was built by Ethan & Athen's Dad. If you're interested in me building you one of your own tailored exactly to your needs at a fair price, feel free to reach out.
+          </h2>
+
+          {/* CTA Button */}
           <a
             href={phoneLink}
-            className="inline-flex items-center gap-2 px-6 py-2 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg transition-colors"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white hover:bg-gray-100 text-purple-700 font-bold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl group"
           >
             <svg
-              className="w-5 h-5"
+              className="w-6 h-6 group-hover:animate-bounce"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -33,13 +55,14 @@ export default function ContactSection({ name, phone, email }: ContactSectionPro
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
               />
             </svg>
-            {phone}
+            <span className="text-lg">{phone}</span>
           </a>
+
           {emailLink && (
-            <div>
+            <div className="mt-4">
               <a
                 href={emailLink}
-                className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-700 transition-colors"
+                className="inline-flex items-center gap-2 text-purple-200 hover:text-white transition-colors"
               >
                 <svg
                   className="w-5 h-5"

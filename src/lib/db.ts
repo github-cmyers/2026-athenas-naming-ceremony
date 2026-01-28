@@ -1,6 +1,6 @@
-import sql from "mssql";
+import sql, { config as SqlConfig, ConnectionPool, IResult } from "mssql";
 
-const config: sql.config = {
+const config: SqlConfig = {
   user: "Myers_Event",
   password: "Myers_Event",
   server: "localhost",
@@ -11,9 +11,9 @@ const config: sql.config = {
   },
 };
 
-let pool: sql.ConnectionPool | null = null;
+let pool: ConnectionPool | null = null;
 
-export async function getConnection(): Promise<sql.ConnectionPool> {
+export async function getConnection(): Promise<ConnectionPool> {
   if (pool) {
     return pool;
   }
@@ -24,7 +24,7 @@ export async function getConnection(): Promise<sql.ConnectionPool> {
 export async function query<T>(
   queryString: string,
   params?: Record<string, unknown>
-): Promise<sql.IResult<T>> {
+): Promise<IResult<T>> {
   const connection = await getConnection();
   const request = connection.request();
 

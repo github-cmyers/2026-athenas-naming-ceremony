@@ -29,10 +29,10 @@ declare module "mssql" {
 
   export function connect(config: config): Promise<ConnectionPool>;
 
-  const sql: {
-    connect: typeof connect;
-    config: config;
-  };
+  interface SqlDefault {
+    connect(config: config): Promise<ConnectionPool>;
+  }
 
+  const sql: SqlDefault;
   export default sql;
 }

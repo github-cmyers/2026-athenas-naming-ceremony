@@ -12,7 +12,7 @@ import AnimatedSection from "./components/AnimatedSection";
 import Promo from "./components/Promo";
 
 export default function Home() {
-  const ceremonyDate = new Date("2026-03-17T15:00:00");
+  const ceremonyDate = new Date("2026-03-27T13:00:00");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-rose-100 to-pink-50">
@@ -33,8 +33,8 @@ export default function Home() {
 
       <AnimatedSection animation="fade-left" delay={0}>
         <CeremonyDetails
-          date="March 17th, 2026"
-          time="3:00 PM"
+          date="March 28th, 2026"
+          time="1:00 PM"
           address="5 Jay St, Worcester, MA"
           startDate={ceremonyDate}
         />

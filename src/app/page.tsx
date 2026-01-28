@@ -27,6 +27,7 @@ export default function Home() {
         date="March 17th, 2026"
         time="3:00 PM"
         address="5 Jay St, Worcester, MA"
+        startDate={ceremonyDate}
       />
 
       <AboutTheName

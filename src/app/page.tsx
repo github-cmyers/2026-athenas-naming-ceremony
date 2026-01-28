@@ -9,6 +9,7 @@ import RSVPForm from "./components/RSVPForm";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import AnimatedSection from "./components/AnimatedSection";
+import Promo from "./components/Promo";
 
 export default function Home() {
   const ceremonyDate = new Date("2026-03-17T15:00:00");
@@ -24,7 +25,7 @@ export default function Home() {
       <AnimatedSection animation="fade-up" delay={100}>
         <section className="max-w-2xl mx-auto px-4 mb-12">
           <h2 className="text-2xl font-bold text-center text-rose-700 mb-4">
-            Counting Down
+            The Event Begins In:
           </h2>
           <CountdownTimer targetDate={ceremonyDate} />
         </section>
@@ -74,6 +75,13 @@ export default function Home() {
         <ContactSection
           name="Rama Myers"
           phone="401-499-8727"
+        />
+      </AnimatedSection>
+
+      <AnimatedSection animation="fade-up" delay={0}>
+        <Promo
+          name="Rama Myers"
+          phone="802-825-0788"
         />
       </AnimatedSection>
 

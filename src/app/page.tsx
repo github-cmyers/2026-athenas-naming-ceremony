@@ -1,10 +1,12 @@
 import Hero from "./components/Hero";
+import GuestCount from "./components/GuestCount";
 import AboutNamingCeremony from "./components/AboutNamingCeremony";
 import CountdownTimer from "./components/CountdownTimer";
 import CeremonyDetails from "./components/CeremonyDetails";
 import AboutTheName from "./components/AboutTheName";
 import ImageGallery from "./components/ImageGallery";
 import RSVPForm from "./components/RSVPForm";
+import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import AnimatedSection from "./components/AnimatedSection";
 
@@ -55,6 +57,8 @@ export default function Home() {
         </section>
       </AnimatedSection>
 
+            <GuestCount />
+
       <AnimatedSection animation="fade-up" delay={0}>
         <section className="max-w-md mx-auto px-4 pb-16">
           <h2 className="text-3xl font-bold text-center text-rose-700 mb-6">
@@ -62,6 +66,13 @@ export default function Home() {
           </h2>
           <RSVPForm />
         </section>
+      </AnimatedSection>
+
+      <AnimatedSection animation="fade-up" delay={0}>
+        <ContactSection
+          name="Rama Myers"
+          phone="401-499-8727"
+        />
       </AnimatedSection>
 
       <Footer />

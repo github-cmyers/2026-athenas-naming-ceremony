@@ -51,11 +51,10 @@ export default function Hero() {
       </h1>
 
       {/* Subtitle with fade-in effect */}
-      <p className="text-2xl md:text-3xl text-rose-700 font-medium mb-2 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+      <p className="text-xl md:text-2xl text-rose-700 font-medium animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
         Join us for a special celebration
-      </p>
-      <p className="text-xl text-rose-600 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-        as we welcome our baby girl at her
+        <br />
+        <span className="text-rose-600">as we welcome our baby girl at her</span>
       </p>
 
       {/* Naming Ceremony with glow pulse */}

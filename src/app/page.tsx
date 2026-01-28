@@ -58,9 +58,7 @@ export default function Home() {
         </section>
       </AnimatedSection>
 
-      <AnimatedSection animation="fade-up" delay={0} className="pb-8">
-        <GuestCount />
-      </AnimatedSection>
+      <GuestCount />
 
       <AnimatedSection animation="fade-up" delay={0}>
         <section className="max-w-md mx-auto px-4 pb-16">

@@ -15,8 +15,18 @@ export default function GuestCount() {
   const [totalGuests, setTotalGuests] = useState<number | null>(null);
   const [rsvpCount, setRsvpCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLocal, setIsLocal] = useState(false);
 
   useEffect(() => {
+    // Only show on localhost
+    const isLocalhost = window.location.hostname === "localhost";
+    setIsLocal(isLocalhost);
+
+    if (!isLocalhost) {
+      setIsLoading(false);
+      return;
+    }
+
     async function fetchGuestCount() {
       try {
         const res = await fetch("/api/rsvp");
@@ -35,6 +45,11 @@ export default function GuestCount() {
 
     fetchGuestCount();
   }, []);
+
+  // Don't render anything on production
+  if (!isLocal) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -66,7 +81,7 @@ export default function GuestCount() {
           <div>
             <span className="text-2xl font-bold text-rose-600">{totalGuests}</span>
             <span className="text-rose-700 font-medium ml-2">
-           {totalGuests === 1 ? "guest" : "guests"} have RSVP'd
+              {totalGuests === 1 ? "guest" : "guests"} have RSVP&apos;d
             </span>
           </div>
           <span className="text-3xl">🎉</span>

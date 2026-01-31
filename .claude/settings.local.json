@@ -3,7 +3,8 @@
     "allow": [
       "Bash(node --version:*)",
       "Bash(nvm list:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(docker-compose up:*)"
     ]
   }
 }

@@ -1,55 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-interface RSVP {
-  Id: number;
-  Name: string;
-  PlusOne: number;
-  Phone: string;
-  Email: string;
-  CreatedAt: string;
+interface RSVPCount {
+  families: number;
+  guests: number;
 }
 
 export default function GuestCount() {
-  const [totalGuests, setTotalGuests] = useState<number | null>(null);
-  const [rsvpCount, setRsvpCount] = useState<number | null>(null);
+  const [counts, setCounts] = useState<RSVPCount | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLocal, setIsLocal] = useState(false);
 
-  useEffect(() => {
-    // Only show on localhost
-    const isLocalhost = window.location.hostname === "localhost";
-    setIsLocal(isLocalhost);
-
-    if (!isLocalhost) {
-      setIsLoading(false);
-      return;
-    }
-
-    async function fetchGuestCount() {
-      try {
-        const res = await fetch("/api/rsvp");
-        if (res.ok) {
-          const data: RSVP[] = await res.json();
-          const total = data.reduce((sum, rsvp) => sum + 1 + rsvp.PlusOne, 0);
-          setTotalGuests(total);
-          setRsvpCount(data.length);
-        }
-      } catch (error) {
-        console.error("Failed to fetch guest count:", error);
-      } finally {
-        setIsLoading(false);
+  const fetchGuestCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/rsvp/count");
+      if (res.ok) {
+        const data: RSVPCount = await res.json();
+        setCounts(data);
       }
+    } catch (error) {
+      console.error("Failed to fetch guest count:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    fetchGuestCount();
   }, []);
 
-  // Don't render anything on production
-  if (!isLocal) {
-    return null;
-  }
+  useEffect(() => {
+    fetchGuestCount();
+
+    // Listen for RSVP submissions and refresh the count
+    const handleRSVPSubmitted = () => {
+      fetchGuestCount();
+    };
+
+    window.addEventListener("rsvp-submitted", handleRSVPSubmitted);
+    return () => {
+      window.removeEventListener("rsvp-submitted", handleRSVPSubmitted);
+    };
+  }, [fetchGuestCount]);
 
   if (isLoading) {
     return (
@@ -61,7 +49,7 @@ export default function GuestCount() {
     );
   }
 
-  if (totalGuests === null || totalGuests === 0) {
+  if (!counts || counts.guests === 0) {
     return (
       <div className="text-center py-4">
         <div className="inline-block bg-white/70 backdrop-blur rounded-full px-6 py-3 shadow-md">
@@ -79,15 +67,15 @@ export default function GuestCount() {
         <div className="flex items-center gap-3">
           <span className="text-3xl">🎉</span>
           <div>
-            <span className="text-2xl font-bold text-rose-600">{totalGuests}</span>
+            <span className="text-2xl font-bold text-rose-600">{counts.guests}</span>
             <span className="text-rose-700 font-medium ml-2">
-              {totalGuests === 1 ? "guest" : "guests"} have RSVP&apos;d
+              {counts.guests === 1 ? "guest" : "guests"} coming
             </span>
           </div>
           <span className="text-3xl">🎉</span>
         </div>
         <p className="text-sm text-rose-500 mt-1">
-          Currently {rsvpCount} {rsvpCount === 1 ? "family" : "families"} attending
+          {counts.families} {counts.families === 1 ? "family" : "families"} have RSVP&apos;d
         </p>
       </div>
     </div>

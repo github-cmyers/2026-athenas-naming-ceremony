@@ -4,14 +4,13 @@ import { query } from "@/lib/db";
 // Ensure table exists
 async function ensureTable() {
   await query(`
-    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='RSVP_Naming_Ceremony' AND xtype='U')
-    CREATE TABLE RSVP_Naming_Ceremony (
-      Id INT IDENTITY(1,1) PRIMARY KEY,
-      Name NVARCHAR(255) NOT NULL,
+    CREATE TABLE IF NOT EXISTS RSVP_Naming_Ceremony (
+      Id SERIAL PRIMARY KEY,
+      Name VARCHAR(255) NOT NULL,
       PlusOne INT NOT NULL DEFAULT 0,
-      Phone NVARCHAR(50) NOT NULL,
-      Email NVARCHAR(255) NOT NULL,
-      CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+      Phone VARCHAR(50) NOT NULL,
+      Email VARCHAR(255) NOT NULL,
+      CreatedAt TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
 }
@@ -31,13 +30,8 @@ export async function POST(request: NextRequest) {
     }
 
     await query(
-      `INSERT INTO RSVP_Naming_Ceremony (Name, PlusOne, Phone, Email) VALUES (@name, @plusOne, @phone, @email)`,
-      {
-        name,
-        plusOne: plusOne || 0,
-        phone,
-        email,
-      }
+      `INSERT INTO RSVP_Naming_Ceremony (Name, PlusOne, Phone, Email) VALUES ($1, $2, $3, $4)`,
+      [name, plusOne || 0, phone, email]
     );
 
     return NextResponse.json({ success: true });
@@ -54,15 +48,15 @@ export async function GET() {
   try {
     await ensureTable();
     const result = await query<{
-      Id: number;
-      Name: string;
-      PlusOne: number;
-      Phone: string;
-      Email: string;
-      CreatedAt: Date;
+      id: number;
+      name: string;
+      plusone: number;
+      phone: string;
+      email: string;
+      createdat: Date;
     }>("SELECT * FROM RSVP_Naming_Ceremony ORDER BY CreatedAt DESC");
 
-    return NextResponse.json(result.recordset);
+    return NextResponse.json(result.rows);
   } catch (error) {
     console.error("RSVP_Naming_Ceremony fetch error:", error);
     return NextResponse.json(

@@ -13,42 +13,23 @@ export default function RSVPForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isNetlify = typeof window !== "undefined" && window.location.hostname !== "localhost";
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      if (isNetlify) {
-        // Submit to Netlify Forms in production
-        const response = await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            "form-name": "rsvp",
-            ...formData,
-          }).toString(),
-        });
+      const response = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          plusOne: parseInt(formData.plusOne),
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error("Failed to submit RSVP");
-        }
-      } else {
-        // Submit to local API in development
-        const response = await fetch("/api/rsvp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            plusOne: parseInt(formData.plusOne),
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to submit RSVP");
-        }
+      if (!response.ok) {
+        throw new Error("Failed to submit RSVP");
       }
 
       setSubmitted(true);
@@ -81,14 +62,9 @@ export default function RSVPForm() {
 
   return (
     <form
-      name="rsvp"
-      method="POST"
-      data-netlify="true"
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl p-6 shadow-lg space-y-5"
     >
-      {/* Hidden field for Netlify */}
-      <input type="hidden" name="form-name" value="rsvp" />
 
       {error && (
         <div className="bg-red-100 border-2 border-red-300 rounded-xl p-4 text-red-700 text-center">

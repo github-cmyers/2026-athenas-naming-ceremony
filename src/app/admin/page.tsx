@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 
 interface RSVP {
-  Id: number;
-  Name: string;
-  PlusOne: number;
-  Phone: string;
-  Email: string;
-  CreatedAt: string;
+  id: number;
+  name: string;
+  plusone: number;
+  phone: string;
+  email: string;
+  createdat: string;
 }
 
 export default function AdminPage() {
@@ -180,21 +180,21 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-rose-100">
                   {rsvps.map((rsvp) => (
-                    <tr key={rsvp.Id} className="hover:bg-rose-50/50">
+                    <tr key={rsvp.id} className="hover:bg-rose-50/50">
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {rsvp.Name}
+                        {rsvp.name}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {rsvp.PlusOne}
+                        {rsvp.plusone}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {rsvp.Phone}
+                        {rsvp.phone}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {rsvp.Email}
+                        {rsvp.email}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {formatDate(rsvp.CreatedAt)}
+                        {formatDate(rsvp.createdat)}
                       </td>
                     </tr>
                   ))}
@@ -205,7 +205,7 @@ export default function AdminPage() {
               <p className="text-sm text-rose-700">
                 Total: {rsvps.length} RSVP{rsvps.length !== 1 ? "s" : ""} |
                 Total Guests:{" "}
-                {rsvps.reduce((sum, r) => sum + 1 + r.PlusOne, 0)}
+                {rsvps.reduce((sum, r) => sum + 1 + r.plusone, 0)}
               </p>
             </div>
           </div>

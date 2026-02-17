@@ -5,12 +5,12 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 
 const dummyImages = [
-  { id: 1, src: "https://picsum.photos/seed/ceremony1/400/300", alt: "Ceremony decoration" },
-  { id: 2, src: "https://picsum.photos/seed/ceremony2/400/300", alt: "Celebration setup" },
-  { id: 3, src: "https://picsum.photos/seed/ceremony3/400/300", alt: "Flowers" },
-  { id: 4, src: "https://picsum.photos/seed/ceremony4/400/300", alt: "Family gathering" },
-  { id: 5, src: "https://picsum.photos/seed/ceremony5/400/300", alt: "Gifts" },
-  { id: 6, src: "https://picsum.photos/seed/ceremony6/400/300", alt: "Decorations" },
+  { id: 1, src: "/photos/1.JPG", alt: "Photo 1" },
+  { id: 2, src: "/photos/2.jpg", alt: "Photo 2" },
+  { id: 3, src: "/photos/3.jpg", alt: "Photo 3" },
+  { id: 4, src: "/photos/4.JPG", alt: "Photo 4" },
+  { id: 5, src: "/photos/5.JPG", alt: "Photo 5" },
+  { id: 6, src: "/photos/6.JPG", alt: "Photo 6" },
 ];
 
 export default function ImageGallery() {
@@ -64,7 +64,7 @@ export default function ImageGallery() {
           <div
             key={image.id}
             onClick={() => openLightbox(index)}
-            className="relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl group"
+            className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl group"
           >
             <Image
               src={image.src}
@@ -90,7 +90,7 @@ export default function ImageGallery() {
         >
           {/* Image container - absolutely centered */}
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-4xl aspect-[4/3]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[85vh] max-h-[85vh] aspect-[3/4]"
             onClick={(e) => e.stopPropagation()}
           >
             <Image

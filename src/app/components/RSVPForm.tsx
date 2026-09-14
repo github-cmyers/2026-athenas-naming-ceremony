@@ -37,14 +37,16 @@ function FloatingInput({
         placeholder=" "
         className="peer w-full px-4 py-4 pt-6 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none transition-all text-gray-900 disabled:opacity-50 bg-white"
       />
+      {/* At rest the label is centred against the input's full height rather
+          than pinned near the top; the input is taller than its text because
+          `pt-6` reserves room for the label to float up into on focus. */}
       <label
         htmlFor={id}
-        className={`absolute left-4 transition-all duration-200 pointer-events-none
-          ${hasValue || 'peer-focus:'}
-          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-          peer-focus:top-2 peer-focus:text-xs peer-focus:text-pink-500
-          ${hasValue ? 'top-2 text-xs text-pink-500' : 'top-4 text-base text-gray-500'}
-        `}
+        className={`pointer-events-none absolute left-4 transition-all duration-200 ${
+          hasValue
+            ? "top-2 translate-y-0 text-xs text-pink-500"
+            : "top-1/2 -translate-y-1/2 text-base text-gray-500"
+        } peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-pink-500`}
       >
         {label}
       </label>

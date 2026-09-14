@@ -1,20 +1,26 @@
 import AddToCalendar from "./AddToCalendar";
+import {
+  CEREMONY_DURATION_HOURS,
+  formatEventDate,
+  formatEventTime,
+} from "@/lib/event";
 
 interface CeremonyDetailsProps {
-  date: string;
-  time: string;
   address: string;
   startDate: Date;
   durationHours?: number;
 }
 
 export default function CeremonyDetails({
-  date,
-  time,
   address,
   startDate,
-  durationHours = 3,
+  durationHours = CEREMONY_DURATION_HOURS,
 }: CeremonyDetailsProps) {
+  // Derived from startDate rather than passed in, so the text shown to guests
+  // and the time in the calendar invite can never drift apart.
+  const date = formatEventDate(startDate);
+  const time = formatEventTime(startDate);
+
   const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(address)}`;
 
   const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);

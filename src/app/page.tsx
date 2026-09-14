@@ -10,10 +10,9 @@ import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import AnimatedSection from "./components/AnimatedSection";
 import Promo from "./components/Promo";
+import { ceremonyDate } from "@/lib/event";
 
 export default function Home() {
-  const ceremonyDate = new Date("2026-10-10T16:00:00");
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-rose-100 to-pink-50">
       <Hero />
@@ -33,8 +32,6 @@ export default function Home() {
 
       <AnimatedSection animation="fade-left" delay={0}>
         <CeremonyDetails
-          date="October 10th, 2026"
-          time="4:00 PM"
           address="5 Jay St, Worcester, MA"
           startDate={ceremonyDate}
         />

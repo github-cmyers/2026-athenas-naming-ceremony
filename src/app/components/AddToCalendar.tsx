@@ -19,20 +19,12 @@ export default function AddToCalendar({
 }: AddToCalendarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Format date for Google Calendar (YYYYMMDDTHHmmssZ)
-  function formatGoogleDate(date: Date): string {
+  // UTC stamp (YYYYMMDDTHHMMSSZ) understood by both Google Calendar and ICS.
+  // The ICS half used to emit local wall-clock digits with no zone, which made
+  // it a "floating" time that lands on the wrong hour for anyone whose
+  // calendar is not in the event's timezone.
+  function formatUtcStamp(date: Date): string {
     return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  }
-
-  // Format date for ICS file (YYYYMMDDTHHMMSS)
-  function formatICSDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
   }
 
   // Google Calendar URL
@@ -40,7 +32,7 @@ export default function AddToCalendar({
     const params = new URLSearchParams({
       action: "TEMPLATE",
       text: title,
-      dates: `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`,
+      dates: `${formatUtcStamp(startDate)}/${formatUtcStamp(endDate)}`,
       details: description,
       location: location,
     });
@@ -70,8 +62,8 @@ export default function AddToCalendar({
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
       "BEGIN:VEVENT",
-      `DTSTART:${formatICSDate(startDate)}`,
-      `DTEND:${formatICSDate(endDate)}`,
+      `DTSTART:${formatUtcStamp(startDate)}`,
+      `DTEND:${formatUtcStamp(endDate)}`,
       `SUMMARY:${title}`,
       `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
       `LOCATION:${location}`,

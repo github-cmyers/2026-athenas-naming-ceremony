@@ -115,9 +115,24 @@ function AttendanceChoice({
   onChange: (value: boolean) => void;
   disabled: boolean;
 }) {
+  // Each option carries its own selected/focus colours as complete class
+  // strings - Tailwind only emits utilities it can see written out literally,
+  // so these cannot be built by interpolating a colour name.
   const options = [
-    { value: true, icon: "🎉", label: "Joyfully accepts" },
-    { value: false, icon: "💌", label: "Regretfully declines" },
+    {
+      value: true,
+      icon: "🎉",
+      label: "Joyfully accepts",
+      highlight:
+        "peer-checked:border-green-500 peer-checked:bg-green-50 peer-focus-visible:ring-green-400",
+    },
+    {
+      value: false,
+      icon: "💌",
+      label: "Regretfully declines",
+      highlight:
+        "peer-checked:border-pink-500 peer-checked:bg-pink-50 peer-focus-visible:ring-pink-400",
+    },
   ];
 
   // The fieldset carries no margin utility on purpose: the parent form's
@@ -139,7 +154,9 @@ function AttendanceChoice({
               onChange={() => onChange(option.value)}
               className="peer sr-only"
             />
-            <div className="rounded-xl border-2 border-pink-200 px-3 py-4 text-center transition-all peer-checked:border-pink-500 peer-checked:bg-pink-50 peer-focus-visible:ring-2 peer-focus-visible:ring-pink-400 peer-focus-visible:ring-offset-2 peer-disabled:opacity-50">
+            <div
+              className={`rounded-xl border-2 border-pink-200 px-3 py-4 text-center transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-disabled:opacity-50 ${option.highlight}`}
+            >
               <div className="text-2xl mb-1">{option.icon}</div>
               <div className="text-sm font-semibold text-gray-800">
                 {option.label}

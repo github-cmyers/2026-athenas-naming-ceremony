@@ -1,25 +1,23 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
+import { ensureRsvpTable } from "@/lib/rsvp";
 
 export async function GET() {
   try {
-    // Create table if it doesn't exist
-    await query(`
-      CREATE TABLE IF NOT EXISTS RSVP_Naming_Ceremony (
-        Id SERIAL PRIMARY KEY,
-        Name VARCHAR(255) NOT NULL,
-        PlusOne INT NOT NULL DEFAULT 0,
-        Phone VARCHAR(50) NOT NULL,
-        Email VARCHAR(255) NOT NULL,
-        CreatedAt TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      )
-    `);
+    await ensureRsvpTable();
 
-    // Get aggregated counts only - no personal data exposed
-    const result = await query<{ families: string; guests: string }>(`
+    // Get aggregated counts only - no personal data exposed.
+    // Declines are counted separately so they never inflate the headcount.
+    const result = await query<{
+      families: string;
+      guests: string;
+      declined: string;
+    }>(`
       SELECT
-        COUNT(*) as families,
-        COALESCE(SUM(PlusOne), 0) + COUNT(*) as guests
+        COUNT(*) FILTER (WHERE Attending) as families,
+        COALESCE(SUM(PlusOne) FILTER (WHERE Attending), 0)
+          + COUNT(*) FILTER (WHERE Attending) as guests,
+        COUNT(*) FILTER (WHERE NOT Attending) as declined
       FROM RSVP_Naming_Ceremony
     `);
 
@@ -28,6 +26,7 @@ export async function GET() {
     return NextResponse.json({
       families: parseInt(row.families) || 0,
       guests: parseInt(row.guests) || 0,
+      declined: parseInt(row.declined) || 0,
     });
   } catch (error) {
     console.error("RSVP count fetch error:", error);

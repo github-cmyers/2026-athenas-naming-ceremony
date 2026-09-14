@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ADMIN_SESSION_COOKIE,
+  SESSION_COOKIE_OPTIONS,
+  createSessionToken,
+} from "@/lib/adminSession";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,12 +29,11 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({ success: true });
 
-    response.cookies.set("admin_session", "authenticated", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-    });
+    response.cookies.set(
+      ADMIN_SESSION_COOKIE,
+      createSessionToken(adminPassword),
+      SESSION_COOKIE_OPTIONS
+    );
 
     return response;
   } catch (error) {

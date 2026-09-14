@@ -102,30 +102,88 @@ function FloatingSelect({
   );
 }
 
+// Accept / decline choice, rendered as a real radio group so it is reachable
+// with the keyboard and announced correctly by screen readers.
+function AttendanceChoice({
+  attending,
+  onChange,
+  disabled,
+}: {
+  attending: boolean;
+  onChange: (value: boolean) => void;
+  disabled: boolean;
+}) {
+  const options = [
+    { value: true, icon: "🎉", label: "Joyfully accepts" },
+    { value: false, icon: "💌", label: "Regretfully declines" },
+  ];
+
+  // The fieldset carries no margin utility on purpose: the parent form's
+  // `space-y-5` is defined inside `:where(...)`, which has zero specificity, so
+  // even `m-0` would beat it and collapse the gap below this group.
+  return (
+    <fieldset disabled={disabled} className="border-0 p-0">
+      <legend className="text-sm font-medium text-gray-600 mb-3 px-1">
+        Will you be joining us?
+      </legend>
+      <div className="grid grid-cols-2 gap-3">
+        {options.map((option) => (
+          <label key={String(option.value)} className="relative cursor-pointer">
+            <input
+              type="radio"
+              name="attending"
+              value={String(option.value)}
+              checked={attending === option.value}
+              onChange={() => onChange(option.value)}
+              className="peer sr-only"
+            />
+            <div className="rounded-xl border-2 border-pink-200 px-3 py-4 text-center transition-all peer-checked:border-pink-500 peer-checked:bg-pink-50 peer-focus-visible:ring-2 peer-focus-visible:ring-pink-400 peer-focus-visible:ring-offset-2 peer-disabled:opacity-50">
+              <div className="text-2xl mb-1">{option.icon}</div>
+              <div className="text-sm font-semibold text-gray-800">
+                {option.label}
+              </div>
+            </div>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 // Animated success component
-function SuccessMessage({ name }: { name: string }) {
+function SuccessMessage({
+  name,
+  attending,
+}: {
+  name: string;
+  attending: boolean;
+}) {
   return (
     <div className="success-container bg-gradient-to-br from-pink-100 via-rose-100 to-pink-50 border-2 border-pink-300 rounded-2xl p-8 text-center overflow-hidden relative">
-      {/* Floating hearts background */}
-      <div className="floating-hearts">
-        <span className="heart heart-1">💕</span>
-        <span className="heart heart-2">💖</span>
-        <span className="heart heart-3">💗</span>
-        <span className="heart heart-4">✨</span>
-        <span className="heart heart-5">🎉</span>
-      </div>
+      {/* Floating hearts background - celebratory only for acceptances */}
+      {attending && (
+        <div className="floating-hearts">
+          <span className="heart heart-1">💕</span>
+          <span className="heart heart-2">💖</span>
+          <span className="heart heart-3">💗</span>
+          <span className="heart heart-4">✨</span>
+          <span className="heart heart-5">🎉</span>
+        </div>
+      )}
 
       {/* Main content with staggered animations */}
       <div className="relative z-10">
-        <div className="icon-pop text-5xl mb-4">💖</div>
+        <div className="icon-pop text-5xl mb-4">{attending ? "💖" : "💌"}</div>
         <h3 className="title-slide text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-rose-600 mb-3">
           Thank You!
         </h3>
         <p className="message-fade text-rose-700 text-lg">
-          We can&apos;t wait to celebrate with you,
+          {attending
+            ? "We can't wait to celebrate with you,"
+            : "We're sorry you can't make it, but thank you for letting us know,"}
         </p>
         <p className="name-pop text-xl font-semibold text-rose-800 mt-1">
-          {name}! 🎉
+          {name}! {attending ? "🎉" : "💗"}
         </p>
       </div>
 
@@ -225,6 +283,7 @@ export default function RSVPForm() {
     phone: "",
     email: "",
   });
+  const [attending, setAttending] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -240,7 +299,8 @@ export default function RSVPForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          plusOne: parseInt(formData.plusOne),
+          plusOne: attending ? parseInt(formData.plusOne) : 0,
+          attending,
         }),
       });
 
@@ -268,7 +328,7 @@ export default function RSVPForm() {
   };
 
   if (submitted) {
-    return <SuccessMessage name={formData.name} />;
+    return <SuccessMessage name={formData.name} attending={attending} />;
   }
 
   return (
@@ -293,18 +353,27 @@ export default function RSVPForm() {
         required
       />
 
-      <FloatingSelect
-        id="plusOne"
-        name="plusOne"
-        label="Number of Additional Guests (+1s)"
-        value={formData.plusOne}
-        onChange={handleChange}
+      <AttendanceChoice
+        attending={attending}
+        onChange={setAttending}
         disabled={loading}
-        options={[0, 1, 2, 3, 4, 5].map((num) => ({
-          value: String(num),
-          label: String(num),
-        }))}
       />
+
+      {/* Only meaningful for acceptances - someone who declines brings no one */}
+      {attending && (
+        <FloatingSelect
+          id="plusOne"
+          name="plusOne"
+          label="Number of Additional Guests (+1s)"
+          value={formData.plusOne}
+          onChange={handleChange}
+          disabled={loading}
+          options={[0, 1, 2, 3, 4, 5].map((num) => ({
+            value: String(num),
+            label: String(num),
+          }))}
+        />
+      )}
 
       <FloatingInput
         id="phone"
@@ -333,7 +402,11 @@ export default function RSVPForm() {
         disabled={loading}
         className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-lg rounded-xl hover:from-pink-600 hover:to-rose-600 transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-50 disabled:hover:scale-100"
       >
-        {loading ? "Submitting..." : "RSVP Now! 💌"}
+        {loading
+          ? "Submitting..."
+          : attending
+            ? "RSVP Now! 💌"
+            : "Send Your Reply 💌"}
       </button>
     </form>
   );

@@ -1,26 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
-
-// Ensure table exists
-async function ensureTable() {
-  await query(`
-    CREATE TABLE IF NOT EXISTS RSVP_Naming_Ceremony (
-      Id SERIAL PRIMARY KEY,
-      Name VARCHAR(255) NOT NULL,
-      PlusOne INT NOT NULL DEFAULT 0,
-      Phone VARCHAR(50) NOT NULL,
-      Email VARCHAR(255) NOT NULL,
-      CreatedAt TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
-}
+import { ensureRsvpTable } from "@/lib/rsvp";
 
 export async function POST(request: NextRequest) {
   try {
-    await ensureTable();
+    await ensureRsvpTable();
 
     const body = await request.json();
-    const { name, plusOne, phone, email } = body;
+    const { name, plusOne, phone, email, attending } = body;
 
     if (!name || !phone || !email) {
       return NextResponse.json(
@@ -29,9 +16,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (typeof attending !== "boolean") {
+      return NextResponse.json(
+        { error: "An attending response is required" },
+        { status: 400 }
+      );
+    }
+
+    // Someone who is not coming cannot bring anyone with them.
+    const guests = attending ? plusOne || 0 : 0;
+
     await query(
-      `INSERT INTO RSVP_Naming_Ceremony (Name, PlusOne, Phone, Email) VALUES ($1, $2, $3, $4)`,
-      [name, plusOne || 0, phone, email]
+      `INSERT INTO RSVP_Naming_Ceremony (Name, PlusOne, Phone, Email, Attending) VALUES ($1, $2, $3, $4, $5)`,
+      [name, guests, phone, email, attending]
     );
 
     return NextResponse.json({ success: true });
@@ -46,13 +43,14 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    await ensureTable();
+    await ensureRsvpTable();
     const result = await query<{
       id: number;
       name: string;
       plusone: number;
       phone: string;
       email: string;
+      attending: boolean;
       createdat: Date;
     }>("SELECT * FROM RSVP_Naming_Ceremony ORDER BY CreatedAt DESC");
 

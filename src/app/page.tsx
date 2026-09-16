@@ -32,7 +32,7 @@ export default function Home() {
 
       <AnimatedSection animation="fade-left" delay={0}>
         <CeremonyDetails
-          address="5 Jay St, Worcester, MA"
+          address="Jacky's Galaxie and Sushi Bar, 1488 Mineral Spring Ave, North Providence, RI 02904"
           startDate={ceremonyDate}
         />
       </AnimatedSection>
